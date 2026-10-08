@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Esmâ-i Nebî — Peygamber Efendimizin 99 İsmi</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1f2a37;--mute:#5b6675;--line:#ddd8cc;--acc:#1f4e45;--acc-ink:#fff;--tag:#ece8dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181c;--card:#1c2228;--ink:#e6e9ec;--mute:#9aa5b1;--line:#2d353d;--acc:#5fb3a1;--acc-ink:#0e1a17;--tag:#262e36}}
+:root[data-theme="dark"]{--bg:#14181c;--card:#1c2228;--ink:#e6e9ec;--mute:#9aa5b1;--line:#2d353d;--acc:#5fb3a1;--acc-ink:#0e1a17;--tag:#262e36}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Georgia,"Times New Roman",serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);margin:0 0 6px;letter-spacing:.2px}
+.sub{color:var(--mute);margin:0 0 18px}
+.note{border-left:3px solid var(--acc);padding:8px 14px;color:var(--mute);font-size:.92rem;margin:0 0 22px;background:var(--card)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+input[type=search]{flex:1 1 220px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 11px;border-radius:999px;font:.85rem system-ui,sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+#pdf{background:var(--acc);color:var(--acc-ink);border:0;padding:11px 18px;border-radius:6px;font:600 .95rem system-ui,sans-serif;cursor:pointer;margin-left:auto}
+#pdf:disabled{opacity:.6;cursor:wait}
+#msg{min-height:1.4em;font:.88rem system-ui,sans-serif;color:var(--mute);margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.no{color:var(--mute);font:.8rem system-ui,sans-serif}
+.nm{font-size:1.15rem;font-weight:700;margin:2px 0 6px;color:var(--acc)}
+.mn{margin:0 0 10px;font-size:.95rem}
+.tag{display:inline-block;background:var(--tag);color:var(--mute);font:.72rem system-ui,sans-serif;padding:2px 8px;border-radius:4px}
+footer{margin-top:28px;color:var(--mute);font:.82rem/1.5 system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Esmâ-i Nebî</h1>
+<p class="sub">Peygamber Efendimizin (s.a.v.) 99 ismi ve anlamları</p>
+<p class="note">Peygamber Efendimizin isim ve sıfatları kaynaklarda sayıca farklılık gösterir; Delâil-i Hayrât’ta iki yüz kadarı geçer. Hadislerle belirlenmiş sabit bir “99 isim” listesi yoktur. Bu liste, Esmâ-i Nebî literatüründen birbirinden farklı 99 ad seçilerek derlenmiştir. Her ad; isim, sıfat, künye, nisbe veya Kur’an hitabı olarak etiketlenmiştir.</p>
+<div class="bar">
+<input id="q" type="search" placeholder="İsim veya anlam ara" aria-label="Ara">
+<button id="pdf" type="button">Tümünü PDF olarak indir</button>
+</div>
+<div class="chips" id="chips" style="margin-bottom:16px"></div>
+<p id="msg" role="status"></p>
+<div class="grid" id="grid"></div>
+<footer>Başlıca kaynaklar: Buhârî (Menâkıb 17), Müslim (Fedâil 125), Muvatta (Esmâu’n-Nebî), Saf 6, Ahzâb 40–46, Tevbe 128, Enbiyâ 107, Delâil-i Hayrât, Osman Nuri Topbaş – Hazret-i Muhammed Mustafa.</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script>
+var RAW = `Muhammed|Çokça övülen; övgüye değer güzel vasıfları kendinde toplayan.|İsim
+Ahmed|Allah’ı en çok öven; insanlar arasında en çok övgüye lâyık olan.|İsim
+Mahmûd|Övülmüş, methedilmiş.|İsim
+Hâmid|Allah’a çokça hamd eden.|İsim
+Hamîd|Övgüye lâyık olan.|Sıfat
+Mustafâ|Allah tarafından seçilmiş, arınmış olan.|Sıfat
+Müctebâ|Seçilip diğerlerinden ayrılan.|Sıfat
+Murtazâ|Allah’ın kendisinden razı olduğu.|Sıfat
+Muhtâr|Seçilmiş, tercih edilmiş.|Sıfat
+Habîbullah|Allah’ın sevgilisi.|Sıfat
+Halîlullah|Allah’ın dostu.|Sıfat
+Safiyyullah|Allah’ın saf ve seçkin kulu.|Sıfat
+Nebî|Allah’tan haber alan ve haber veren; yüce makam sahibi.|İsim
+Resûlullah|Allah’ın elçisi.|İsim
+Ümmî|Okuma yazma öğrenmemiş; ilmini doğrudan vahiyden alan.|Sıfat
+Emîn|Güvenilir, kendisine emniyet edilen.|Sıfat
+Sâdık|Söz ve davranışında doğru olan.|Sıfat
+Musaddık|Kendinden önceki hak kitapları ve peygamberleri doğrulayan.|Sıfat
+Masdûk|Doğruluğu kabul edilen, tasdik edilen.|Sıfat
+Beşîr|Müjdeleyen.|Sıfat
+Mübeşşir|Cennetle ve Allah’ın rızasıyla müjde veren.|Sıfat
+Nezîr|Sorumluluk ve azap konusunda uyaran.|Sıfat
+Münzir|İnkâr ve isyanın sonuçlarına karşı uyaran.|Sıfat
+Şâhid|Ümmetinin durumuna şahitlik eden.|Sıfat
+Mübelliğ|Allah’ın mesajını eksiksiz ulaştıran.|Sıfat
+Dâî|İnsanları Allah’a çağıran.|Sıfat
+Hâdî|Doğru yolu gösteren.|Sıfat
+Mehdî|Allah tarafından hidayete erdirilmiş.|Sıfat
+Sirâcün Münîr|Aydınlatan kandil; hakikati ışıtan.|Sıfat
+Nûr|Işık; gönülleri ve zihinleri aydınlatan.|Sıfat
+Mısbâh|Işık veren kandil.|Sıfat
+Burhân|Apaçık delil.|Sıfat
+Şems|Güneş; ilim ve hidayet kaynağı.|Sıfat
+Bedr|Dolunay.|Sıfat
+Duhâ|Kuşluk vaktinin aydınlığı.|Sıfat
+Necmü’s-Sâkıb|Karanlığı delip geçen yıldız.|Sıfat
+Raûf|Çok şefkatli.|Sıfat
+Rahîm|Çok merhametli.|Sıfat
+Rahmetün li’l-Âlemîn|Âlemlere rahmet olan.|Sıfat
+Nebiyyü’r-Rahme|Rahmet peygamberi.|Sıfat
+Nebiyyü’t-Tevbe|Tövbeyi öğreten ve teşvik eden peygamber.|Sıfat
+Nebiyyü’l-Melhame|Hakkı savunma mücadelesinin peygamberi.|Sıfat
+Hâtemü’n-Nebiyyîn|Peygamberlerin sonuncusu, mührü.|Sıfat
+Âkıb|Kendisinden sonra peygamber gelmeyecek olan.|İsim
+Hâşir|Kıyamet günü insanların ardında toplanacağı kimse.|İsim
+Mâhî|Küfrü ve şirki silip yok eden.|İsim
+Mukaffî|Peygamberlerin ardından gelen, sonuncu.|Sıfat
+Seyyidü’l-Mürselîn|Elçilerin efendisi.|Sıfat
+Seyyidü’l-Kevneyn|İki cihanın efendisi.|Sıfat
+Seyyidü Veledi Âdem|Âdemoğullarının efendisi.|Sıfat
+Resûlü’s-Sekaleyn|İnsanların ve cinlerin elçisi.|Sıfat
+İmâmü’l-Müttakîn|Takva sahiplerinin önderi.|Sıfat
+İmâmü’l-Harameyn|Mekke ve Medine’nin imamı.|Sıfat
+Kâidü’l-Ğurri’l-Muhaccelîn|Abdest izinden alınları ve uzuvları parlayanların önderi.|Sıfat
+Şefîu’l-Müznibîn|Günahkârların şefaatçisi.|Sıfat
+Şefî’|Şefaat eden.|Sıfat
+Müşeffa’|Şefaati kabul edilen.|Sıfat
+Sâhibü’l-Livâ|Hamd sancağının sahibi.|Sıfat
+Sâhibü’l-Mi’râc|Miraç yolculuğunun sahibi.|Sıfat
+Sâhibü’l-Burâk|Burak’a binen.|Sıfat
+Sâhibü’l-Hucce|Kesin delil sahibi.|Sıfat
+Sâhibü’t-Tâc|Taç (sarık) sahibi.|Sıfat
+Tâhâ|Tâhâ Suresi’nin ilk âyetindeki hitap; anlamı hakkında farklı yorumlar vardır.|Kur’an hitabı
+Yâsîn|Yâsîn Suresi’nin ilk âyetindeki hitap; anlamı hakkında farklı yorumlar vardır.|Kur’an hitabı
+Müzzemmil|Elbisesine bürünen (Müzzemmil, 1).|Kur’an hitabı
+Müddessir|Örtüsüne bürünen (Müddessir, 1).|Kur’an hitabı
+Kerîm|Cömert, şerefli.|Sıfat
+Azîz|Değerli, izzet sahibi.|Sıfat
+Hakîm|Hikmet sahibi.|Sıfat
+Kâmil|Olgun, eksiksiz.|Sıfat
+Fâtıh|Açan, fetheden.|Sıfat
+Mübîn|Hakikati açık ve net ortaya koyan.|Sıfat
+Mükerrem|Kendisine ikram ve değer verilen.|Sıfat
+Mutahhar|Her türlü kirden arınmış.|Sıfat
+Mutî’|Allah’a itaat eden.|Sıfat
+Müheymin|Ümmetini gözeten ve koruyan.|Sıfat
+Müzekkir|Öğüt veren, hatırlatan (Gâşiye, 21).|Sıfat
+Müzekkî|Nefisleri arındıran (Bakara, 129).|Sıfat
+Muallim|Öğreten.|Sıfat
+Mü’min|Allah’a ve hakka inanan; inananlara güven veren.|Sıfat
+Mansûr|Allah’ın yardım ettiği.|Sıfat
+Ebü’l-Kâsım|Kâsım’ın babası.|Künye
+Kâşifü’l-Kürebât|Sıkıntı ve kederleri gideren.|Sıfat
+Ni’metullah|Allah’ın insanlığa nimeti.|Sıfat
+Hediyyetullah|Allah’ın insanlığa hediyesi.|Sıfat
+Hayru Halkıllah|Allah’ın yarattıklarının en hayırlısı.|Sıfat
+Mübârek|Bereketli.|Sıfat
+Şekûr|Çok şükreden.|Sıfat
+Tâhir|Temiz, her türlü kirden uzak olan.|Sıfat
+Zâkir|Allah’ı çokça anan.|Sıfat
+Mücâhid|Allah yolunda gayret gösteren.|Sıfat
+Nâsih|Ümmetine samimi öğüt veren.|Sıfat
+Ebtahî|Mekke yakınındaki Ebtah vadisine mensup.|Nisbe
+Hâşimî|Hâşim soyundan gelen.|Nisbe
+Kureşî|Kureyş kabilesine mensup.|Nisbe
+Arabî|Arap.|Nisbe
+Mekkî|Mekke’de doğan.|Nisbe
+Medenî|Medine’ye hicret eden ve orada yaşayan.|Nisbe
+Tihâmî|Tihâme bölgesine mensup (Mekke çevresi).|Nisbe`;
+var NAMES = RAW.split("\n").map(function(l,i){var p=l.split("|");return {n:i+1,name:p[0],mean:p[1],type:p[2]}});
+var filter = "Tümü", grid = document.getElementById("grid"), q = document.getElementById("q"), msg = document.getElementById("msg");
+var types = ["Tümü"]; NAMES.forEach(function(x){ if(types.indexOf(x.type)<0) types.push(x.type); });
+var chips = document.getElementById("chips");
+types.forEach(function(t){
+  var b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=t; b.setAttribute("aria-pressed", t===filter);
+  b.onclick=function(){ filter=t; Array.prototype.forEach.call(chips.children,function(c){c.setAttribute("aria-pressed", c.textContent===t)}); render(); };
+  chips.appendChild(b);
+});
+function render(){
+  var s=q.value.trim().toLocaleLowerCase("tr"); grid.textContent="";
+  NAMES.forEach(function(x){
+    if(filter!=="Tümü" && x.type!==filter) return;
+    if(s && (x.name+" "+x.mean).toLocaleLowerCase("tr").indexOf(s)<0) return;
+    var c=document.createElement("div"); c.className="card";
+    var t=document.createElement("div"); t.className="top";
+    var no=document.createElement("span"); no.className="no"; no.textContent=String(x.n).padStart(2,"0")+" / 99";
+    var tg=document.createElement("span"); tg.className="tag"; tg.textContent=x.type;
+    t.appendChild(no); t.appendChild(tg);
+    var nm=document.createElement("div"); nm.className="nm"; nm.textContent=x.name;
+    var mn=document.createElement("p"); mn.className="mn"; mn.textContent=x.mean;
+    c.appendChild(t); c.appendChild(nm); c.appendChild(mn); grid.appendChild(c);
+  });
+  if(!grid.children.length){ var e=document.createElement("p"); e.className="no"; e.textContent="Sonuç bulunamadı."; grid.appendChild(e); }
+}
+q.addEventListener("input", render); render();
+
+document.getElementById("pdf").addEventListener("click", function(){
+  var btn=this; msg.textContent="";
+  if(!window.pdfMake){ msg.textContent="PDF bileşeni yüklenemedi."; return; }
+  btn.disabled=true; msg.textContent="PDF hazırlanıyor…";
+  var body=[[{text:"No",bold:true},{text:"İsim",bold:true},{text:"Anlam",bold:true},{text:"Tür",bold:true}]];
+  NAMES.forEach(function(x){ body.push([String(x.n), {text:x.name,bold:true}, x.mean, x.type]); });
+  var dd={
+    pageSize:"A4", pageMargins:[40,50,40,50], defaultStyle:{font:"Roboto",fontSize:10},
+    info:{title:"Esmâ-i Nebî — Peygamber Efendimizin 99 İsmi"},
+    content:[
+      {text:"Esmâ-i Nebî",fontSize:22,bold:true,margin:[0,0,0,2]},
+      {text:"Peygamber Efendimizin (s.a.v.) 99 ismi ve anlamları",fontSize:12,color:"#555",margin:[0,0,0,10]},
+      {text:"Peygamber Efendimizin isim ve sıfatları kaynaklarda sayıca farklılık gösterir; hadislerle belirlenmiş sabit bir “99 isim” listesi yoktur. Bu liste, Esmâ-i Nebî literatüründen birbirinden farklı 99 ad seçilerek derlenmiştir.",fontSize:9,color:"#555",margin:[0,0,0,12]},
+      {table:{headerRows:1,widths:[26,125,"*",62],body:body},
+       layout:{fillColor:function(r){return r===0?"#e7e3d6":(r%2===0?"#f7f5ef":null);},hLineColor:function(){return "#cfc9b8";},vLineColor:function(){return "#cfc9b8";}}}
+    ],
+    footer:function(p,c){return {text:p+" / "+c,alignment:"center",fontSize:8,color:"#777"};}
+  };
+  try{
+    pdfMake.createPdf(dd).download("Esma-i-Nebi-99-Isim.pdf");
+    msg.textContent="PDF indirme başlatıldı.";
+    btn.disabled=false;
+  }catch(e){ msg.textContent="PDF oluşturulamadı."; btn.disabled=false; }
+});
+</script>
+</body>
+</html>
